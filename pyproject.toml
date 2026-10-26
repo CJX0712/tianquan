@@ -1,0 +1,88 @@
+# =============================================================================
+# 天权 TIANQUAN — 分布式训练 x 高效推理服务统一内核
+# 作者: 晨星 (Chenxing) | License: Apache-2.0
+#
+# 零重写原则: 不重新发明算法, 只把世界顶级成果 (Horovod/PyTorch DDP/ZeRO/
+# Megatron-LM/GPipe/vLLM/SGLang/FlashAttention) 在 CPU 上做成可复现、可验证
+# 的最小可信实现, 并给出实测性能数据。
+# =============================================================================
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build.meta"
+
+[project]
+name = "tianquan"
+version = "1.0.0"
+description = "天权 TIANQUAN — 世界顶级分布式训练 x 高效推理服务统一内核 (纯 NumPy, CPU 可跑可测)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "晨星 (Chenxing)", email = "CJX0712@users.noreply.github.com" }]
+keywords = [
+    "distributed-training",
+    "allreduce",
+    "zero",
+    "ddp",
+    "tensor-parallelism",
+    "pipeline-parallelism",
+    "paged-attention",
+    "continuous-batching",
+    "speculative-decoding",
+    "llm-serving",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "hypothesis>=6.90",
+    "psutil>=5.9",
+]
+bench = ["psutil>=5.9"]
+
+[project.urls]
+Homepage = "https://github.com/CJX0712/tianquan"
+Repository = "https://github.com/CJX0712/tianquan"
+Issues = "https://github.com/CJX0712/tianquan/issues"
+
+[project.scripts]
+tianquan = "tianquan.cli:main"
+
+[tool.setuptools.packages.find]
+where = "src"
+
+[tool.setuptools.package-data]
+tianquan = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: 耗时较长的基准/多进程测试",
+    "mp: 需要真实多进程 (spawn) 的测试",
+    "invariant: 数学/算法不变量验证",
+]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["src/tianquan"]
+branch = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["B008", "E731"]
